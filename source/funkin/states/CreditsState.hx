@@ -54,7 +54,7 @@ class CreditsState extends MusicBeatState
 		['NIGHTMARE FEDS'],
 		['DuskieWhy', 'duskie', 'Programmer of Nightmare Vision', 'https://twitter.com/DuskieWhy', '0xA8324A'],
 		['data5', 'data', 'Programmer of Nightmare Vision', 'https://x.com/_data5', '0xF9A250'],
-		['NebulaZorua', 'neb', 'Modchart backend\nCreated the initial fork NMV was derived from', 'https://twitter.com/Nebula_Zorua', '0x9B00B3'],
+		['NebulaZorua', 'neb', 'Modchart backend\n(Created the initial fork NMV was derived from)', 'https://twitter.com/Nebula_Zorua', '0x9B00B3'],
 		['JoggingScout', 'joggingscout', 'Artist (SUPER KUTTY!!!!)', 'https://twitter.com/JoggingScout', '0x3366CC'],
 		['Iseta', 'iseta', 'Artist (a little less kutty...)', 'https://twitter.com/Isetaaaaa', '0x6ede0b'],
 		// Additional contributions
@@ -208,6 +208,12 @@ class CreditsState extends MusicBeatState
 			if (credits.length > 1)
 			{
 				final moveMult:Int = FlxG.keys.pressed.SHIFT ? 3 : 1;
+				
+				if (FlxG.mouse.wheel != 0)
+				{
+					changeSelection(-FlxG.mouse.wheel * moveMult);
+					holdTime = 0;
+				}
 				
 				if (controls.UI_UP_P)
 				{
