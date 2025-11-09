@@ -1,6 +1,5 @@
 package funkin;
 
-import openfl.display.PNGEncoderOptions;
 import openfl.utils.Assets;
 
 import lime.graphics.Image;
@@ -12,12 +11,12 @@ import haxe.Json;
 
 typedef ModMeta =
 {
-	name:String,
-	global:Bool,
+	var name:String;
+	var global:Bool;
 	
-	windowTitle:String,
-	iconFile:String,
-	defaultTransition:String
+	var ?windowTitle:String;
+	var ?iconFile:String;
+	var ?defaultTransition:String;
 }
 
 typedef ModsList =
@@ -277,47 +276,44 @@ class Mods
 		{
 			funkin.utils.WindowUtil.setTitle(pack.windowTitle ?? 'Friday Night Funkin');
 			
-			if (pack.iconFile != null)
-			{
-				// non-working byte translation for the icon. im just fat and lazy and cant figure it out. will make better later
-				
-				// var bmp = Paths.image(pack.iconFile).bitmap;
-				// trace(Paths.image(pack.iconFile));
-				// FlxG.stage.window.setIcon(Image.fromBytes(bmp.encode(bmp.rect, new PNGEncoderOptions())));
-				
-				FlxG.stage.window.setIcon(Image.fromBitmapData(Paths.image(pack.iconFile).bitmap));
-			}
-			else trace('No custom icon for ${pack.name}');
+			if (pack.iconFile != null) final path = Paths.getPath('images/${pack.iconFile}.png', IMAGE, null, true);
 			
-			if (pack.defaultTransition != null)
-			{
-				var trans = null;
-				
-				switch (pack.defaultTransition)
-				{
-					case 'base', 'swipe':
-						var trans = funkin.states.transitions.SwipeTransition;
-						
-						funkin.backend.MusicBeatState.transitionInState = trans;
-						funkin.backend.MusicBeatState.transitionOutState = trans;
-					case 'fade':
-						var trans = funkin.states.transitions.FadeTransition;
-						
-						funkin.backend.MusicBeatState.transitionInState = trans;
-						funkin.backend.MusicBeatState.transitionOutState = trans;
-					default:
-						funkin.states.transitions.ScriptedTransition.setTransition(pack.defaultTransition);
-				}
-			}
+			if (FunkinAssets.exists(path)) FlxG.stage.window.setIcon(Image.fromBytes(FunkinAssets.getBytes(path)));
 			else
 			{
-				trace('No custom transition for ${pack.name}');
-				
-				var trans = funkin.states.transitions.SwipeTransition;
-				
-				funkin.backend.MusicBeatState.transitionInState = trans;
-				funkin.backend.MusicBeatState.transitionOutState = trans;
+				Logger.log('Could not find Icon ${pack.image}', ERROR);
 			}
 		}
+		
+		if (pack.defaultTransition != null)
+		{
+			var trans = null;
+			
+			switch (pack.defaultTransition)
+			{
+				case 'base', 'swipe':
+					var trans = funkin.states.transitions.SwipeTransition;
+					
+					funkin.backend.MusicBeatState.transitionInState = trans;
+					funkin.backend.MusicBeatState.transitionOutState = trans;
+				case 'fade':
+					var trans = funkin.states.transitions.FadeTransition;
+					
+					funkin.backend.MusicBeatState.transitionInState = trans;
+					funkin.backend.MusicBeatState.transitionOutState = trans;
+				default:
+					funkin.states.transitions.ScriptedTransition.setTransition(pack.defaultTransition);
+			}
+		}
+		else
+		{
+			trace('No custom transition for ${pack.name}');
+			
+			var trans = funkin.states.transitions.SwipeTransition;
+			
+			funkin.backend.MusicBeatState.transitionInState = trans;
+			funkin.backend.MusicBeatState.transitionOutState = trans;
+		}
 	}
+}
 }

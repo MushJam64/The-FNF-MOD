@@ -1,15 +1,16 @@
 package funkin;
 
-import flixel.graphics.FlxGraphic;
-import flixel.system.FlxAssets;
+import haxe.io.Bytes;
 
 import openfl.media.Sound;
-
-import funkin.backend.FunkinCache;
-
 import openfl.utils.AssetType;
 import openfl.display.BitmapData;
 import openfl.Assets;
+
+import flixel.graphics.FlxGraphic;
+import flixel.system.FlxAssets;
+
+import funkin.backend.FunkinCache;
 
 /**
  * backend for retrieving and caching assets
@@ -35,6 +36,21 @@ class FunkinAssets
 		{
 			Logger.log('failed to parse content\nException: ${e.message}', WARN, false, pos);
 			return null;
+		}
+	}
+	
+	/**
+	 * Retrieves the Bytes of a given file from its path
+	 */
+	public static function getBytes(path:String):Bytes
+	{
+		#if (MODS_ALLOWED || ASSET_REDIRECT)
+		if (FileSystem.exists(path)) return File.getBytes(path);
+		#end
+		if (Assets.exists(path)) return Assets.getBytes(path);
+		else
+		{
+			throw 'Couldnt find file at path [$path]';
 		}
 	}
 	
