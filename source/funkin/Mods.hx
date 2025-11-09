@@ -272,16 +272,17 @@ class Mods
 	public static function loadTopModConfig()
 	{
 		var pack = getPack();
-		if (pack != null)
+		if (pack == null) return;
+		if (pack != null) funkin.utils.WindowUtil.setTitle(pack.windowTitle ?? 'Friday Night Funkin');
+		
+		if (pack.iconFile != null)
 		{
-			funkin.utils.WindowUtil.setTitle(pack.windowTitle ?? 'Friday Night Funkin');
-			
-			if (pack.iconFile != null) final path = Paths.getPath('images/${pack.iconFile}.png', IMAGE, null, true);
+			final path = Paths.getPath('images/${pack.iconFile}.png', IMAGE, null, true);
 			
 			if (FunkinAssets.exists(path)) FlxG.stage.window.setIcon(Image.fromBytes(FunkinAssets.getBytes(path)));
 			else
 			{
-				Logger.log('Could not find Icon ${pack.image}', ERROR);
+				Logger.log('Could not find Icon ${pack.iconFile}', ERROR);
 			}
 		}
 		
