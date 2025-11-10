@@ -13,7 +13,7 @@ class DiscordClient
 	/**
 	 * NightmareVisions specific id
 	 */
-	static final NMV_ID:String = '1252033037680513115';
+	public static final NMV_ID:String = '1252033037680513115';
 	
 	/**
 	 * Additional thread to run discord tasks without lagspikes

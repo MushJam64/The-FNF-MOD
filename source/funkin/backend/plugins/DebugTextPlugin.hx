@@ -59,7 +59,7 @@ class DebugText extends FlxText
 	public function new(text:String, color:FlxColor = FlxColor.WHITE)
 	{
 		super(10, 10, FlxG.width, text, 16);
-		setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		setFormat(funkin.Mods.currentFont, 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		scrollFactor.set();
 		borderSize = 1;
 		this.color = color;

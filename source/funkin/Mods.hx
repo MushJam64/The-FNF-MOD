@@ -1,5 +1,7 @@
 package funkin;
 
+import grig.audio.SampleRate;
+
 import openfl.utils.Assets;
 
 import lime.graphics.Image;
@@ -19,8 +21,12 @@ typedef ModMeta =
 	var ?discordClientID:String;
 	var ?windowTitle:String;
 	var ?iconFile:String;
+	
 	var ?defaultTransition:String;
 	var ?stateRedirects:RedirectableStates;
+	
+	// make sure to include .ttf or .otf!!!!
+	var ?defaultFont:String;
 }
 
 typedef RedirectableStates =
@@ -48,6 +54,8 @@ class Mods
 	public static var currentModDirectory:Null<String> = '';
 	
 	public static var currentMod:Null<ModMeta>;
+	
+	public static var currentFont:String = '';
 	
 	public static final ignoreModFolders:Array<String> = [
 		'characters',
@@ -209,7 +217,7 @@ class Mods
 		return list;
 	}
 	
-	static function updateModList()
+	public static function updateModList(top:String = '')
 	{
 		#if MODS_ALLOWED
 		ensureModsListExists();
@@ -218,6 +226,15 @@ class Mods
 		var list:Array<{folder:String, enabled:Bool}> = [];
 		var added:Array<String> = [];
 		
+		if (top.length >= 1)
+		{
+			if (FileSystem.exists(Paths.mods(top)) && FileSystem.isDirectory(Paths.mods(top)) && !added.contains(top))
+			{
+				added.push(top);
+				list.push({folder: top, enabled: true});
+			}
+		}
+		
 		for (mod in CoolUtil.coolTextFile('modsList.txt'))
 		{
 			var dat:Array<String> = mod.split("|");
@@ -225,7 +242,7 @@ class Mods
 			if (folder.trim().length > 0
 				&& FileSystem.exists(Paths.mods(folder))
 				&& FileSystem.isDirectory(Paths.mods(folder))
-				&& !added.contains(folder))
+				&& !added.contains(folder) && folder != top)
 			{
 				added.push(folder);
 				list.push({folder: folder, enabled: (dat[1] == "1")});
@@ -239,11 +256,10 @@ class Mods
 				&& FileSystem.exists(Paths.mods(folder))
 				&& FileSystem.isDirectory(Paths.mods(folder))
 				&& !ignoreModFolders.contains(folder.toLowerCase())
-				&& !added.contains(folder))
+				&& !added.contains(folder) && folder != top)
 			{
 				added.push(folder);
-				list.push({folder: folder, enabled: true}); // i like it false by default. -bb //Well, i like it True! -Shadow Mario (2022)
-				// Shadow Mario (2023): What the fuck was bb thinking
+				list.push({folder: folder, enabled: true});
 			}
 		}
 		
@@ -291,13 +307,24 @@ class Mods
 		
 		funkin.utils.WindowUtil.setTitle(pack.windowTitle ?? 'Friday Night Funkin');
 		
+		inline function resetIcon()
+		{
+			final path = Paths.getPath('images/branding/icon/icon64.png', IMAGE, null, true);
+			FlxG.stage.window.setIcon(Image.fromBytes(FunkinAssets.getBytes(path)));
+		}
+		
 		if (pack.iconFile != null)
 		{
 			final path = Paths.getPath('images/${pack.iconFile}.png', IMAGE, null, true);
 			
 			if (FunkinAssets.exists(path)) FlxG.stage.window.setIcon(Image.fromBytes(FunkinAssets.getBytes(path)));
-			else Logger.log('Could not find Icon ${pack.iconFile}', ERROR);
+			else
+			{
+				resetIcon();
+				Logger.log('Could not find Icon ${pack.iconFile}', ERROR);
+			}
 		}
+		else resetIcon();
 		
 		if (pack.defaultTransition != null)
 		{
@@ -326,6 +353,22 @@ class Mods
 		}
 		
 		if (pack.discordClientID != null) funkin.api.DiscordClient.rpcId = pack.discordClientID;
+		else funkin.api.DiscordClient.rpcId = DiscordClient.NMV_ID;
+		
+		if (pack.defaultFont != null)
+		{
+			if (FunkinAssets.exists(Paths.font(pack.defaultFont)))
+			{
+				currentFont = Paths.font(pack.defaultFont);
+				trace(currentFont);
+			}
+			else
+			{
+				currentFont = Paths.font('vcr.ttf');
+				Logger.log('Issue with loading ${Paths.font(pack.defaultFont)}, does it exist?', ERROR);
+			}
+		}
+		else currentFont = Paths.font('vcr.ttf');
 		
 		// if (pack.stateRedirects.TitleState != null) TitleState.init();
 		
@@ -336,7 +379,7 @@ class Mods
 	{
 		final stateName = Type.getClassName(Type.getClass(nextState)).split('.').pop();
 		
-		if (currentMod != null && currentMod.stateRedirects == null) return false;
+		if (currentMod == null || currentMod.stateRedirects == null) return false;
 		
 		var retVal = false;
 		switch (stateName)
@@ -361,6 +404,7 @@ class Mods
 	public static function getRedirect(nextState:flixel.FlxState):Null<String>
 	{
 		final stateName = Type.getClassName(Type.getClass(nextState)).split('.').pop();
+		if (currentMod == null || currentMod.stateRedirects == null) return null;
 		
 		var retVal = null;
 		switch (stateName)
@@ -378,6 +422,44 @@ class Mods
 			case 'OptionsState':
 				retVal = currentMod.stateRedirects.OptionsState;
 		}
+		
+		return retVal;
+	}
+	
+	public static function getModIcon(?mod:String):String
+	{
+		if (mod.length < 1) mod = currentModDirectory;
+		
+		var retVal = 'branding/icon/fallback';
+		var pack = getPack(mod);
+		
+		if (pack != null && pack.iconFile != null) retVal = pack.iconFile;
+		
+		return retVal;
+	}
+	
+	public static function getModName(?mod:String):String
+	{
+		if (mod.length < 1) mod = currentModDirectory;
+		
+		var retVal = mod;
+		var pack = getPack(mod);
+		
+		if (pack != null && pack.name != null) retVal = pack.name;
+		
+		return retVal;
+	}
+	
+	public static function getModFont(?mod:String):String
+	{
+		if (mod.length < 1) mod = currentModDirectory;
+		
+		var retVal = Paths.font('vcr.ttf');
+		var pack = getPack(mod);
+		
+		if (pack != null && pack.defaultFont != null) retVal = Paths.font(pack.defaultFont);
+		
+		trace(retVal);
 		
 		return retVal;
 	}

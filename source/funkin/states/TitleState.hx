@@ -14,8 +14,8 @@ import funkin.objects.Alphabet;
 @:nullSafety
 class TitleState extends MusicBeatState
 {
-	static var initialized:Bool = false;
-	static var closedState:Bool = false;
+	public static var initialized:Bool = false;
+	public static var closedState:Bool = false;
 	
 	var skippedIntro:Bool = false;
 	var transitioning:Bool = false;
