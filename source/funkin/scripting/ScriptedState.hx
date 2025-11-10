@@ -9,6 +9,7 @@ class ScriptedState extends MusicBeatState
 	{
 		super();
 		
+		trace(scriptName);
 		initStateScript(scriptName, false);
 		scriptGroup.parent = this;
 	}
@@ -23,6 +24,6 @@ class ScriptedState extends MusicBeatState
 			return;
 		}
 		
-		scriptGroup.call('onCreate', []);
+		scriptGroup.call('onLoad', []);
 	}
 }

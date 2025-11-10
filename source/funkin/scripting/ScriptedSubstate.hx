@@ -23,6 +23,6 @@ class ScriptedSubstate extends funkin.backend.MusicBeatSubstate
 			return;
 		}
 		
-		scriptGroup.call('onCreate', []);
+		scriptGroup.call('onLoad', []);
 	}
 }

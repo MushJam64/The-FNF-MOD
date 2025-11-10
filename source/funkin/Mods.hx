@@ -19,6 +19,17 @@ typedef ModMeta =
 	var ?windowTitle:String;
 	var ?iconFile:String;
 	var ?defaultTransition:String;
+	var ?stateRedirects:RedirectableStates;
+}
+
+typedef RedirectableStates =
+{
+	var ?TitleState:String;
+	var ?MainMenuState:String;
+	var ?StoryMenuState:String;
+	var ?FreeplayState:String;
+	var ?CreditsState:String;
+	var ?OptionsState:String;
 }
 
 typedef ModsList =
@@ -34,6 +45,8 @@ class Mods
 	 * The current primary loaded mod
 	 */
 	public static var currentModDirectory:Null<String> = '';
+	
+	public static var currentMod:Null<ModMeta>;
 	
 	public static final ignoreModFolders:Array<String> = [
 		'characters',
@@ -184,7 +197,6 @@ class Mods
 		#if MODS_ALLOWED
 		for (mod in CoolUtil.coolTextFile('modsList.txt'))
 		{
-			// trace('Mod: $mod');
 			if (mod.trim().length < 1) continue;
 			
 			var dat = mod.split("|");
@@ -238,7 +250,6 @@ class Mods
 		var fileStr:String = '';
 		for (values in list)
 		{
-			// trace(values);
 			if (fileStr.length > 0) fileStr += '\n';
 			fileStr += values.folder + '|' + (values.enabled ? '1' : '0');
 		}
@@ -267,15 +278,15 @@ class Mods
 			}
 		}
 		
-		loadTopModConfig();
+		currentMod = loadTopModConfig();
 		#end
 	}
 	
-	public static function loadTopModConfig()
+	public static function loadTopModConfig():Null<ModMeta>
 	{
 		var pack = getPack();
 		
-		if (pack == null) return;
+		if (pack == null) return null;
 		
 		funkin.utils.WindowUtil.setTitle(pack.windowTitle ?? 'Friday Night Funkin');
 		
@@ -312,5 +323,61 @@ class Mods
 			MusicBeatState.transitionInState = trans;
 			MusicBeatState.transitionOutState = trans;
 		}
+		
+		// if (pack.stateRedirects.TitleState != null) TitleState.init();
+		
+		return pack;
+	}
+	
+	public static function isStateRedirected(nextState:flixel.FlxState):Bool
+	{
+		loadTopMod();
+		
+		final stateName = Type.getClassName(Type.getClass(nextState)).split('.').pop();
+		
+		if (currentMod != null && currentMod.stateRedirects == null) return false;
+		
+		var retVal = false;
+		switch (stateName)
+		{
+			case 'TitleState':
+				retVal = currentMod.stateRedirects.TitleState != null;
+			case 'MainMenuState':
+				retVal = currentMod.stateRedirects.MainMenuState != null;
+			case 'StoryMenuState':
+				retVal = currentMod.stateRedirects.StoryMenuState != null;
+			case 'FreeplayState':
+				retVal = currentMod.stateRedirects.FreeplayState != null;
+			case 'CreditsState':
+				retVal = currentMod.stateRedirects.CreditsState != null;
+			case 'OptionsState':
+				retVal = currentMod.stateRedirects.OptionsState != null;
+		}
+		
+		return retVal;
+	}
+	
+	public static function getRedirect(nextState:flixel.FlxState):Null<String>
+	{
+		final stateName = Type.getClassName(Type.getClass(nextState)).split('.').pop();
+		
+		var retVal = null;
+		switch (stateName)
+		{
+			case 'TitleState':
+				retVal = currentMod.stateRedirects.TitleState;
+			case 'MainMenuState':
+				retVal = currentMod.stateRedirects.MainMenuState;
+			case 'StoryMenuState':
+				retVal = currentMod.stateRedirects.StoryMenuState;
+			case 'FreeplayState':
+				retVal = currentMod.stateRedirects.FreeplayState;
+			case 'CreditsState':
+				retVal = currentMod.stateRedirects.CreditsState;
+			case 'OptionsState':
+				retVal = currentMod.stateRedirects.OptionsState;
+		}
+		
+		return retVal;
 	}
 }

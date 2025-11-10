@@ -24,6 +24,6 @@ class ScriptedTransition extends BaseTransitionState
 		scriptPrefix = 'transitions';
 		initStateScript(_transition, false);
 		
-		scriptGroup.call('onCreate', []);
+		scriptGroup.call('onLoad', []);
 	}
 }

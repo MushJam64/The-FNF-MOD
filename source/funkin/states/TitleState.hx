@@ -33,30 +33,29 @@ class TitleState extends MusicBeatState
 	
 	var danceLeft:Bool = false;
 	
-	override public function create():Void
+	public static function init():Void
 	{
+		trace('running titlestate init');
+		
 		FunkinAssets.cache.clearStoredMemory();
 		FunkinAssets.cache.clearUnusedMemory();
-		
-		#if MODS_ALLOWED
-		Mods.pushGlobalMods();
-		#end
-		// Just to load a mod on start up if ya got one. For mods that change the menu music and bg
-		funkin.Mods.loadTopMod();
-		
-		randomIntroText = FlxG.random.getObject(getIntroText());
-		
-		initStateScript();
 		
 		if (FlxG.save.data.flashing == null && !FlashingState.leftState)
 		{
 			CoolUtil.setTransSkip();
 			FlxG.switchState(FlashingState.new);
 		}
-		else
-		{
-			startIntro();
-		}
+	}
+	
+	override public function create():Void
+	{
+		init();
+		
+		randomIntroText = FlxG.random.getObject(getIntroText());
+		
+		initStateScript();
+		
+		startIntro();
 		
 		super.create();
 		

@@ -98,7 +98,7 @@ class ScriptMacros
 							var clName = Type.getClassName(Type.getClass(this));
 							if (clName.contains('.')) clName = clName.substr(clName.lastIndexOf('.') + 1, clName.length);
 							
-							var scriptFile = funkin.scripts.FunkinScript.getPath('scripts/menus/' + clName, false);
+							var scriptFile = funkin.scripts.FunkinScript.getPath('scripts/states/' + clName, false);
 							
 							var found = sys.FileSystem.exists(scriptFile);
 							
