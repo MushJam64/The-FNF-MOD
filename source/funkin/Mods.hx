@@ -16,6 +16,7 @@ typedef ModMeta =
 	var name:String;
 	var global:Bool;
 	
+	var ?discordClientID:String;
 	var ?windowTitle:String;
 	var ?iconFile:String;
 	var ?defaultTransition:String;
@@ -324,6 +325,8 @@ class Mods
 			MusicBeatState.transitionOutState = trans;
 		}
 		
+		if (pack.discordClientID != null) funkin.api.DiscordClient.rpcId = pack.discordClientID;
+		
 		// if (pack.stateRedirects.TitleState != null) TitleState.init();
 		
 		return pack;
@@ -331,8 +334,6 @@ class Mods
 	
 	public static function isStateRedirected(nextState:flixel.FlxState):Bool
 	{
-		loadTopMod();
-		
 		final stateName = Type.getClassName(Type.getClass(nextState)).split('.').pop();
 		
 		if (currentMod != null && currentMod.stateRedirects == null) return false;

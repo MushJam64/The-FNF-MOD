@@ -9,7 +9,6 @@ class ScriptedState extends MusicBeatState
 	{
 		super();
 		
-		trace(scriptName);
 		initStateScript(scriptName, false);
 		scriptGroup.parent = this;
 	}
