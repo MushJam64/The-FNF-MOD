@@ -1468,7 +1468,7 @@ class PlayState extends MusicBeatState
 			if (!noteTypesPushed.contains(type))
 			{
 				var baseScriptFile = 'data/notetypes/$type';
-				if (!FunkinAssets.exists(baseScriptFile, TEXT)) baseScriptFile = 'notetypes/$type';
+				if (!FunkinAssets.exists(FunkinScript.getPath(baseScriptFile), TEXT)) baseScriptFile = 'notetypes/$type';
 				
 				final scriptFile = FunkinScript.getPath(baseScriptFile);
 				
