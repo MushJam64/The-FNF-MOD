@@ -3283,7 +3283,7 @@ class PlayState extends MusicBeatState
 					// ghost stuff
 					final chord = noteRows[note.mustPress ? 0 : 1][note.row];
 					
-					if (!(char.holdStyle && note.isSustainNote))
+					if (!(char.vSliceSustains && note.isSustainNote))
 					{
 						if (ClientPrefs.jumpGhosts && char.ghostsEnabled && chord != null && chord.length > 1 && note.noteType != "Ghost Note")
 						{

@@ -18,7 +18,7 @@ class Character extends Bopper
 	/**
 	 * how much the camera moves with the characters sings animations
 	 */
-	public var camDisplacement:Float = 10.5;
+	public var camDisplacement:Float = 20;
 	
 	/**
 	 * is the player character
@@ -118,7 +118,7 @@ class Character extends Bopper
 	public var isPlayerInEditor:Null<Bool> = null;
 	public var imageFile:String = '';
 	public var jsonScale:Float = 1;
-	public var originalHoldStyle = false;
+	public var originalVSliceSus = false;
 	public var noAntialiasing:Bool = false;
 	public var originalFlipX:Bool = false;
 	
@@ -136,9 +136,10 @@ class Character extends Bopper
 	
 	public var healthColour:Int = FlxColor.RED;
 	
-	// If true, vslice hold anim style
-	// If false, legacy hold anim style
-	public var holdStyle = false;
+	/**
+	 *	If enabled, the character's singing animation will stop at the last frame while holding a sustain note
+	 */
+	public var vSliceSustains = false;
 	
 	public function new(x:Float = 0, y:Float = 0, character:String = 'bf', isPlayer:Bool = false)
 	{
@@ -176,7 +177,7 @@ class Character extends Bopper
 		this.cameraPosition = json.camera_position;
 		
 		this.healthIcon = json.healthicon;
-		this.holdStyle = json.hold_style;
+		this.vSliceSustains = json.vslice_sustains;
 		this.singDuration = json.sing_duration;
 		this.noAntialiasing = json.no_antialiasing;
 		
