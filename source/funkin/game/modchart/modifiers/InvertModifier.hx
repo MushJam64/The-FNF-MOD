@@ -5,6 +5,7 @@ import math.Vector3;
 import flixel.FlxSprite;
 
 import funkin.objects.note.*;
+
 class InvertModifier extends NoteModifier
 {
 	override function getName() return 'invert';

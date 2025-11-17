@@ -46,8 +46,8 @@ class PluginsManager
 	 */
 	public static function prepareSignals():Void
 	{
-		FlxG.signals.postStateSwitch.add(onStateSwitchPost);
-		FlxG.signals.preStateSwitch.add(onStateSwitch);
+		if (!FlxG.signals.postStateSwitch.has(onStateSwitchPost)) FlxG.signals.postStateSwitch.add(onStateSwitchPost);
+		if (!FlxG.signals.preStateSwitch.has(onStateSwitch)) FlxG.signals.preStateSwitch.add(onStateSwitch);
 	}
 	
 	/**

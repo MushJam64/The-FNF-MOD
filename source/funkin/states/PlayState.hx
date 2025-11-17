@@ -945,9 +945,10 @@ class PlayState extends MusicBeatState
 		var hscriptPath = FunkinScript.getPath('data/characters/$name');
 		if (!FunkinAssets.exists(hscriptPath, TEXT)) hscriptPath = FunkinScript.getPath('characters/$name');
 		
-		if (FunkinAssets.exists(hscriptPath, TEXT)) {
+		if (FunkinAssets.exists(hscriptPath, TEXT))
+		{
 			var script = initFunkinScript(hscriptPath);
-
+			
 			script.set('parent', char);
 		}
 	}

@@ -48,7 +48,7 @@ class WindowUtil
 			FlxG.stage.window.x = Std.int((monitorResolutionWidth - newWidth) / 2);
 			FlxG.stage.window.y = Std.int((monitorResolutionHeight - newHeight) / 2);
 		}
-
+		
 		var s = new funkin.backend.FunkinRatioScaleMode();
 		s.height = scaledHeight;
 		FlxG.scaleMode = s;
