@@ -98,17 +98,17 @@ class Paths
 		return getPath('shaders/$key.vert', TEXT, null, checkMods);
 	}
 	
-	static public function video(key:String, checkMods:Bool = true):String
+	public static function video(key:String, checkMods:Bool = true):String
 	{
 		return findFileWithExts('videos/$key', ['mp4', 'mov'], null, checkMods);
 	}
 	
-	static public function textureAtlas(key:String, ?parentFolder:String, checkMods:Bool = true):String
+	public static function textureAtlas(key:String, ?parentFolder:String, checkMods:Bool = true):String
 	{
 		return getPath('images/$key', BINARY, parentFolder, checkMods);
 	}
 	
-	static public function sound(key:String, ?parentFolder:String, checkMods:Bool = true):Sound
+	public static function sound(key:String, ?parentFolder:String, checkMods:Bool = true):Sound
 	{
 		final key = findFileWithExts('sounds/$key', ['ogg', 'wav'], parentFolder, checkMods);
 		
@@ -157,7 +157,6 @@ class Paths
 		return findFileWithExts('fonts/$key', ['ttf', 'otf'], null, checkMods);
 	}
 	
-	// uise this more
 	public static function findFileWithExts(file:String, exts:Array<String>, ?parentFolder:String, checkMods:Bool = true):String
 	{
 		for (ext in exts)
@@ -299,7 +298,7 @@ class Paths
 		return '$MODS_DIRECTORY/' + key;
 	}
 	
-	static public function modFolders(key:String):String
+	public static function modFolders(key:String):String
 	{
 		if (Mods.currentModDirectory != null && Mods.currentModDirectory.length > 0)
 		{

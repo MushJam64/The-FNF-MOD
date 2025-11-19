@@ -190,7 +190,7 @@ class Stage extends FlxTypedContainer<FlxBasic>
 	
 	public function runScript(?group:ScriptGroup):Bool
 	{
-		var baseScriptFile:String = 'data/stages/$curStage/script';
+		final baseScriptFile:String = 'data/stages/$curStage/script';
 		
 		inline function startScript(scriptFile:String)
 		{
@@ -214,18 +214,20 @@ class Stage extends FlxTypedContainer<FlxBasic>
 		
 		inline function tryScript(path:String):Null<String>
 		{
-			var scriptFile = FunkinScript.getPath(path);
+			final scriptFile = FunkinScript.getPath(path);
 			return (FunkinAssets.exists(scriptFile, TEXT) ? scriptFile : null);
 		}
 		
 		// rlly rlly funny line here but yk what its ok
-		var scriptFile = tryScript(baseScriptFile) ?? tryScript('data/stages/$curStage') ?? tryScript('stages/$curStage/script') ?? tryScript('stages/$curStage') ?? tryScript('data/stages/stage');
-		trace(scriptFile);
-
-		if(scriptFile != null){
+		final scriptFile = tryScript(baseScriptFile) ?? tryScript('data/stages/$curStage') ?? tryScript('stages/$curStage/script') ?? tryScript('stages/$curStage') ?? tryScript('data/stages/stage');
+		
+		if (scriptFile != null)
+		{
 			@:nullSafety(Off)
 			startScript(scriptFile);
-		} else {
+		}
+		else
+		{
 			#if VERBOSE_LOGS
 			Logger.log('$curStage is not scripted.');
 			#end

@@ -263,8 +263,6 @@ class WeekData
 		}
 	}
 	
-
-	
 	public function toString()
 	{
 		return FlxStringUtil.getDebugString([

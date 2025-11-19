@@ -1,7 +1,5 @@
 package funkin.states;
 
-import funkin.game.Countdown;
-
 import haxe.Timer;
 import haxe.ds.Vector;
 
@@ -24,6 +22,7 @@ import flixel.group.FlxSpriteGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.util.helpers.FlxBounds;
 import flixel.group.FlxContainer.FlxTypedContainer;
+import flixel.util.FlxStringUtil;
 
 import funkin.objects.Character;
 import funkin.backend.Difficulty;
@@ -45,6 +44,7 @@ import funkin.states.editors.*;
 import funkin.game.modchart.*;
 import funkin.backend.SyncedFlxSoundGroup;
 import funkin.game.StoryMeta;
+import funkin.game.Countdown;
 #if VIDEOS_ALLOWED
 import funkin.video.FunkinVideoSprite;
 #end
@@ -574,6 +574,17 @@ class PlayState extends MusicBeatState
 		debugKeysCharacter = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('debug_2'));
 		PauseSubState.songName = null; // Reset to default
 		
+		#if FLX_DEBUG
+		FlxG.watch.addFunction('Conductor: ', () -> Conductor.songPosition);
+		FlxG.watch.addFunction('SongTime: ', () -> FlxStringUtil.formatTime(Conductor.songPosition / 1000)
+			+ ' / '
+			+ FlxStringUtil.formatTime(FlxG.sound.music.length / 1000));
+			
+		FlxG.watch.addFunction('curSec: ', () -> curSection);
+		FlxG.watch.addFunction('curBeat: ', () -> curBeat);
+		FlxG.watch.addFunction('curStep: ', () -> curStep);
+		#end
+		
 		keysArray = [
 			ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_left')),
 			ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_down')),
@@ -943,9 +954,10 @@ class PlayState extends MusicBeatState
 		var hscriptPath = FunkinScript.getPath('data/characters/$name');
 		if (!FunkinAssets.exists(hscriptPath, TEXT)) hscriptPath = FunkinScript.getPath('characters/$name');
 		
-		if (FunkinAssets.exists(hscriptPath, TEXT)) {
+		if (FunkinAssets.exists(hscriptPath, TEXT))
+		{
 			var script = initFunkinScript(hscriptPath);
-
+			
 			script.set('parent', char);
 		}
 	}
@@ -3285,33 +3297,36 @@ class PlayState extends MusicBeatState
 					// ghost stuff
 					final chord = noteRows[note.mustPress ? 0 : 1][note.row];
 					
-					if (ClientPrefs.jumpGhosts && char.ghostsEnabled && !note.isSustainNote && chord != null && chord.length > 1 && note.noteType != "Ghost Note")
+					if (!(char.vSliceSustains && note.isSustainNote))
 					{
-						final animNote = chord[0];
-						final realAnim = noteSkin.data.singAnimations[Std.int(Math.abs(animNote.noteData))] + animSuffix;
-						
-						if (char.mostRecentRow != note.row) char.playAnim(realAnim, true);
-						
-						if (note.nextNote != null && note.prevNote != null)
+						if (ClientPrefs.jumpGhosts && char.ghostsEnabled && chord != null && chord.length > 1 && note.noteType != "Ghost Note")
 						{
-							if (note != animNote
-								&& !note.nextNote.isSustainNote
-								&& scripts.call('onGhostAnim', [animToPlay, note]) != ScriptConstants.Function_Stop)
+							final animNote = chord[0];
+							final realAnim = noteSkin.data.singAnimations[Std.int(Math.abs(animNote.noteData))] + animSuffix;
+							
+							if (char.mostRecentRow != note.row) char.playAnim(realAnim, true);
+							
+							if (note.nextNote != null && note.prevNote != null)
 							{
-								char.playGhostAnim(chord.indexOf(note), animToPlay, true);
+								if (note != animNote
+									&& !note.nextNote.isSustainNote
+									&& scripts.call('onGhostAnim', [animToPlay, note]) != ScriptConstants.Function_Stop)
+								{
+									char.playGhostAnim(chord.indexOf(note), animToPlay, true);
+								}
+								else if (note.nextNote.isSustainNote)
+								{
+									char.playAnim(realAnim, true);
+									char.playGhostAnim(chord.indexOf(note), animToPlay, true);
+								}
 							}
-							else if (note.nextNote.isSustainNote)
-							{
-								char.playAnim(realAnim, true);
-								char.playGhostAnim(chord.indexOf(note), animToPlay, true);
-							}
+							char.mostRecentRow = note.row;
 						}
-						char.mostRecentRow = note.row;
-					}
-					else
-					{
-						if (note.noteType != "Ghost Note") char.playAnim(animToPlay, true);
-						else char.playGhostAnim(note.noteData, animToPlay, true);
+						else
+						{
+							if (note.noteType != "Ghost Note") char.playAnim(animToPlay, true);
+							else char.playGhostAnim(note.noteData, animToPlay, true);
+						}
 					}
 					
 					switch (note.noteType)

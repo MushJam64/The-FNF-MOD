@@ -123,7 +123,7 @@ class StrumNote extends FlxSprite
 		}
 		else
 		{
-			frames = Paths.getSparrowAtlas(br);
+			frames = Paths.getAtlasFrames(br);
 			
 			setGraphicSize(Std.int(width * NoteSkinHelper.instance.data.scale));
 			
