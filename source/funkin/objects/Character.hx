@@ -118,7 +118,7 @@ class Character extends Bopper
 	public var isPlayerInEditor:Null<Bool> = null;
 	public var imageFile:String = '';
 	public var jsonScale:Float = 1;
-	public var originalVSliceSus = false;
+	
 	public var noAntialiasing:Bool = false;
 	public var originalFlipX:Bool = false;
 	

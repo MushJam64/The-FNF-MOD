@@ -406,8 +406,7 @@ class CharacterEditorState extends UIState // MUST EXTEND UI STATE needed for ac
 		}
 		
 		uiElements.characterDialogBox.vSliceSusCheckbox.onChange = (ui) -> {
-			character.originalVSliceSus = ui.value.toBool();
-			character.vSliceSustains = character.originalVSliceSus;
+			character.vSliceSustains = ui.value.toBool();
 		}
 		
 		uiElements.characterDialogBox.antialiasingCheckbox.onChange = (ui) -> {
@@ -1422,7 +1421,7 @@ class CharacterEditorState extends UIState // MUST EXTEND UI STATE needed for ac
 				"position": character.positionArray,
 				"camera_position": character.cameraPosition,
 				"flip_x": character.originalFlipX,
-				"vslice_sustains": character.originalVSliceSus,
+				"vslice_sustains": character.vSliceSustains,
 				"no_antialiasing": character.noAntialiasing,
 				"healthbar_colour": character.healthColour,
 				"scalableOffsets": character.scalableOffsets,
