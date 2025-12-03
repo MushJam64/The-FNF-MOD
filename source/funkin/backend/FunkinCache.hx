@@ -89,6 +89,8 @@ class FunkinCache
 			}
 		}
 		
+		Paths.tempAtlasFramesCache.clear();
+		
 		openfl.system.System.gc();
 		#if cpp
 		cpp.vm.Gc.compact();

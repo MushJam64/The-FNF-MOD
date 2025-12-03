@@ -39,6 +39,17 @@ class Paths
 	 */
 	public static var DEFAULT_FONT:String = 'vcr.ttf';
 	
+	@:allow(funkin.backend.FunkinCache)
+	static var tempAtlasFramesCache:Map<String, FlxAtlasFrames> = []; // maybe instead of this make a txt cache ?
+	
+	/**
+	 * Primary function used for pathing. In order it will check (Primary Mod Directory, Mods directory, Assets directory)
+	 * @param file The Path to the file. extension included.
+	 * @param type unused???
+	 * @param parentFolder Parent folder to the file
+	 * @param checkMods If true, will search through Mod directories
+	 * @return The path to the file.
+	 */
 	public static function getPath(file:String, ?type:AssetType = TEXT, ?parentFolder:String, checkMods:Bool = false):String
 	{
 		if (parentFolder != null) file = '$parentFolder/$file';
@@ -180,8 +191,10 @@ class Paths
 		return FunkinAssets.exists(getPath(key, type, parentFolder, checkMods), type);
 	}
 	
-	public static inline function getMultiAtlas(keys:Array<String>, ?parentFolder:String, ?allowGPU:Bool = true, checkMods:Bool = true):FlxAtlasFrames // from psych
+	public static inline function getMultiAtlas(keys:Array<String>, ?parentFolder:String, allowGPU:Bool = true, checkMods:Bool = true):FlxAtlasFrames // from psych
 	{
+		if (keys.length == 0) return null;
+		
 		final firstKey:Null<String> = keys.shift()?.trim();
 		
 		var frames = getAtlasFrames(firstKey, parentFolder, allowGPU, checkMods);
@@ -210,6 +223,14 @@ class Paths
 	 */
 	public static inline function getAtlasFrames(key:String, ?parentFolder:String, allowGPU:Bool = true, checkMods:Bool = true):FlxAtlasFrames
 	{
+		final directPath = getPath('images/$key.png', IMAGE, parentFolder, checkMods).withoutExtension();
+		
+		final tempFrames = tempAtlasFramesCache.get(directPath);
+		if (tempFrames != null)
+		{
+			return tempFrames;
+		}
+		
 		final xmlPath = getPath('images/$key.xml', TEXT, parentFolder, checkMods);
 		final txtPath = getPath('images/$key.txt', TEXT, parentFolder, checkMods);
 		
@@ -218,26 +239,57 @@ class Paths
 		// sparrow
 		if (FunkinAssets.exists(xmlPath))
 		{
-			@:nullSafety(Off) // until flixel does null safety
-			return FlxAtlasFrames.fromSparrow(graphic, FunkinAssets.exists(xmlPath) ? FunkinAssets.getContent(xmlPath) : null);
+			// until flixel does null safety
+			@:nullSafety(Off)
+			{
+				final frames = FlxAtlasFrames.fromSparrow(graphic, FunkinAssets.exists(xmlPath) ? FunkinAssets.getContent(xmlPath) : null);
+				if (frames != null) tempAtlasFramesCache.set(directPath, frames);
+				return frames;
+			}
 		}
 		
 		@:nullSafety(Off) // until flixel does null safety
-		return FlxAtlasFrames.fromSpriteSheetPacker(graphic, FunkinAssets.exists(txtPath) ? FunkinAssets.getContent(txtPath) : null);
+		{
+			final frames = FlxAtlasFrames.fromSpriteSheetPacker(graphic, FunkinAssets.exists(txtPath) ? FunkinAssets.getContent(txtPath) : null);
+			if (frames != null) tempAtlasFramesCache.set(directPath, frames);
+			return frames;
+		}
 	}
 	
 	public static inline function getSparrowAtlas(key:String, ?parentFolder:String, ?allowGPU:Bool = true, checkMods:Bool = true):FlxAtlasFrames
 	{
+		final directPath = getPath('images/$key.png', IMAGE, parentFolder, checkMods).withoutExtension();
+		final tempFrames = tempAtlasFramesCache.get(directPath);
+		if (tempFrames != null)
+		{
+			return tempFrames;
+		}
+		
 		final xmlPath = getPath('images/$key.xml', TEXT, parentFolder, checkMods);
 		@:nullSafety(Off) // until flixel does null safety
-		return FlxAtlasFrames.fromSparrow(image(key, parentFolder, allowGPU, checkMods), FunkinAssets.exists(xmlPath) ? FunkinAssets.getContent(xmlPath) : null);
+		{
+			final frames = FlxAtlasFrames.fromSparrow(image(key, parentFolder, allowGPU, checkMods), FunkinAssets.exists(xmlPath) ? FunkinAssets.getContent(xmlPath) : null);
+			if (frames != null) tempAtlasFramesCache.set(directPath, frames);
+			return frames;
+		}
 	}
 	
 	public static inline function getPackerAtlas(key:String, ?parentFolder:String, ?allowGPU:Bool = true, checkMods:Bool = true)
 	{
+		final directPath = getPath('images/$key.png', IMAGE, parentFolder, checkMods).withoutExtension();
+		final tempFrames = tempAtlasFramesCache.get(directPath);
+		if (tempFrames != null)
+		{
+			return tempFrames;
+		}
+		
 		final txtPath = getPath('images/$key.txt', TEXT, parentFolder, checkMods);
 		@:nullSafety(Off) // until flixel does null safety
-		return FlxAtlasFrames.fromSpriteSheetPacker(image(key, parentFolder, allowGPU, checkMods), FunkinAssets.exists(txtPath) ? FunkinAssets.getContent(txtPath) : null);
+		{
+			final frames = FlxAtlasFrames.fromSpriteSheetPacker(image(key, parentFolder, allowGPU, checkMods), FunkinAssets.exists(txtPath) ? FunkinAssets.getContent(txtPath) : null);
+			if (frames != null) tempAtlasFramesCache.set(directPath, frames);
+			return frames;
+		}
 	}
 	
 	public static inline function formatToSongPath(path:String):String
