@@ -39,7 +39,7 @@ class HealthIcon extends FlxSprite
 		scrollFactor.set();
 	}
 	
-	override function update(elapsed:Float)
+	override function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
 		
@@ -49,7 +49,7 @@ class HealthIcon extends FlxSprite
 	/**
 	 * Attempts to load a new icon by file name
 	 */
-	public function changeIcon(char:String)
+	public function changeIcon(char:String):Void
 	{
 		if (this.characterName == char) return;
 		
@@ -67,7 +67,7 @@ class HealthIcon extends FlxSprite
 		updateHitbox();
 		
 		animation.add(char, [0, 1], 0, false, isPlayer);
-		animation.play(char);
+		animation.play(char); // i do plan on adding more functionality to icons at a later date
 		
 		antialiasing = char.endsWith('-pixel') ? false : ClientPrefs.globalAntialiasing;
 	}
@@ -83,5 +83,13 @@ class HealthIcon extends FlxSprite
 	{
 		sprOffsets = FlxDestroyUtil.put(sprOffsets);
 		super.destroy();
+	}
+	
+	/**
+	 * Updates the current animation based on a value from 0 - 1.
+	 */
+	public inline function updateIconAnim(health:Float):Void
+	{
+		animation.frameIndex = health < 0.2 ? 1 : 0;
 	}
 }
