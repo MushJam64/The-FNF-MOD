@@ -87,6 +87,28 @@ class PlayState extends MusicBeatState
 	];
 	
 	/**
+	 * Helper function to ready PlayState for conveniently.
+	 * 
+	 * will return null if done successfully. Otherwise, the exception will be returned.
+	 */
+	public static function prepareForSong(songName:String, difficulty:Int = 1, isStoryMode:Bool = false):Null<haxe.Exception>
+	{
+		try
+		{
+			PlayState.SONG = Chart.fromSong(songName, difficulty);
+			PlayState.storyMeta.difficulty = difficulty;
+			PlayState.isStoryMode = isStoryMode;
+			
+			return null;
+		}
+		catch (e)
+		{
+			// Logger.log('Failed to prepare for song.\nException $e', ERROR);
+			return e;
+		}
+	}
+	
+	/**
 	 * Multiplier to the game speed
 	 */
 	public var playbackRate(default, set):Float = 1;
@@ -429,16 +451,46 @@ class PlayState extends MusicBeatState
 	public var countdownSounds:Bool = true;
 	public var countdownDelay:Float = 0;
 	
+	/**
+	 * The length of the music track in miliseconds
+	 * 
+	 * Used for discord RPC and the time bar.
+	 * 
+	 * Can be manually changed.
+	 */
 	var songLength:Float = 0;
 	
 	public var boyfriendCameraOffset:Array<Float> = [0, 0];
 	public var opponentCameraOffset:Array<Float> = [0, 0];
 	public var girlfriendCameraOffset:Array<Float> = [0, 0];
 	
-	// Discord RPC variables
-	var storyDifficultyText:String = "";
-	var detailsText:String = "";
-	var detailsPausedText:String = "";
+	/**
+	 * The shown difficulty in the discord RPC.
+	 * 
+	 * Can be manually changed.
+	 */
+	var rpcDifficulty:String = '';
+	
+	/**
+	 * The shown description in the discord RPC.
+	 * 
+	 * Can be manually changed.
+	 */
+	var rpcDescription:String = '';
+	
+	/**
+	 * The shown paused Description in the discord RPC.
+	 * 
+	 * Can be manually changed.
+	 */
+	var rpcPausedDescription:String = '';
+	
+	/**
+	 * The shown song name in the discord RPC.
+	 * 
+	 * Can be manually changed.
+	 */
+	var rpcSongName:String = '';
 	
 	/**
 	 * Group of general scripts.
@@ -632,14 +684,13 @@ class PlayState extends MusicBeatState
 		
 		initNoteSkinning(SONG.arrowSkin);
 		
-		storyDifficultyText = Difficulty.difficulties[storyMeta.difficulty];
-		
-		// String for when the game is paused
-		detailsPausedText = "Paused - " + detailsText;
+		// set up rpc stuff
+		rpcDifficulty = '(' + Difficulty.getCurrentDifficultyString() + ')';
+		rpcDescription = isStoryMode == true ? 'Story Mode:' : 'Freeplay:';
+		rpcPausedDescription = 'Paused - ' + rpcDescription;
+		rpcSongName = SONG.song;
 		
 		scripts.set('isStoryMode', isStoryMode);
-		
-		var songName:String = Paths.formatToSongPath(SONG.song);
 		
 		if (SONG.stage == null || SONG.stage.length == 0) SONG.stage = 'stage';
 		
@@ -818,7 +869,7 @@ class PlayState extends MusicBeatState
 		else if (ClientPrefs.pauseMusic != 'None') Paths.music(Paths.formatToSongPath(ClientPrefs.pauseMusic));
 		
 		// Updating Discord Rich Presence.
-		DiscordClient.changePresence(detailsText, '${SONG.song} ($storyDifficultyText)');
+		resetDiscordRPC();
 		
 		if (!ClientPrefs.controllerMode)
 		{
@@ -1353,11 +1404,10 @@ class PlayState extends MusicBeatState
 			vocals.pause();
 		}
 		
-		// Song duration in a float, useful for the time left feature
 		songLength = FlxG.sound.music.length;
 		
 		// Updating Discord Rich Presence (with Time Left)
-		DiscordClient.changePresence(detailsText, '${SONG.song} ($storyDifficultyText)', null, true, songLength);
+		DiscordClient.changePresence(rpcDescription, rpcSongName + ' ' + rpcDifficulty, null, true, songLength);
 		
 		scripts.set('songLength', songLength);
 		scripts.call('onSongStart', []);
@@ -1835,13 +1885,7 @@ class PlayState extends MusicBeatState
 			paused = false;
 			scripts.call('onResume', []);
 			
-			if (startTimer != null && startTimer.finished)
-			{
-				DiscordClient.changePresence(detailsText, '${SONG.song} ($storyDifficultyText)', null, true, songLength
-					- Conductor.songPosition
-					- ClientPrefs.noteOffset);
-			}
-			else DiscordClient.changePresence(detailsText, '${SONG.song} ($storyDifficultyText)');
+			resetDiscordRPC(startTimer != null && startTimer.finished);
 		}
 		scripts.call('onSubstateClose', []);
 		super.closeSubState();
@@ -1851,13 +1895,7 @@ class PlayState extends MusicBeatState
 	{
 		if (health > 0 && !paused)
 		{
-			if (Conductor.songPosition > 0.0)
-			{
-				DiscordClient.changePresence(detailsText, '${SONG.song} ($storyDifficultyText)', null, true, songLength
-					- Conductor.songPosition
-					- ClientPrefs.noteOffset);
-			}
-			else DiscordClient.changePresence(detailsText, '${SONG.song} ($storyDifficultyText)');
+			resetDiscordRPC(Conductor.songPosition > 0.0);
 		}
 		
 		super.onFocus();
@@ -1865,9 +1903,19 @@ class PlayState extends MusicBeatState
 	
 	override public function onFocusLost():Void
 	{
-		if (health > 0 && !paused) DiscordClient.changePresence(detailsPausedText, '${SONG.song} ($storyDifficultyText)');
+		if (health > 0 && !paused) resetDiscordRPC(false);
 		
 		super.onFocusLost();
+	}
+	
+	/**
+	 * Sets the Discord RPC to display the default in song descriptions.
+	 * @param showTime if showTime, the RPC will show the current song progress.
+	 */
+	inline function resetDiscordRPC(showTime:Bool = false)
+	{
+		if (!showTime) DiscordClient.changePresence(rpcDescription, rpcSongName + ' ' + rpcDifficulty);
+		else DiscordClient.changePresence(rpcDescription, rpcSongName + ' ' + rpcDifficulty, null, true, songLength - Conductor.songPosition - ClientPrefs.noteOffset);
 	}
 	
 	function resyncVocals():Void
@@ -2187,7 +2235,7 @@ class PlayState extends MusicBeatState
 		}
 		openSubState(new PauseSubState());
 		
-		DiscordClient.changePresence(detailsPausedText, 'Paused');
+		DiscordClient.changePresence(rpcPausedDescription, 'Paused');
 	}
 	
 	function openChartEditor():Void
@@ -2201,7 +2249,7 @@ class PlayState extends MusicBeatState
 		FlxG.switchState(ChartEditorState.new);
 		chartingMode = true;
 		
-		DiscordClient.changePresence("Chart Editor", null, null, true);
+		DiscordClient.changePresence('Chart Editor');
 	}
 	
 	function openCharacterEditor():Void
@@ -2266,7 +2314,7 @@ class PlayState extends MusicBeatState
 				openSubState(new GameOverSubstate(boyfriend));
 				
 				// Game Over doesn't get his own variable because it's only used here
-				DiscordClient.changePresence("Game Over - " + detailsText, SONG.song);
+				DiscordClient.changePresence("Game Over - " + rpcDescription, rpcSongName);
 				
 				isDead = true;
 				totalBeat = 0;
@@ -2322,7 +2370,7 @@ class PlayState extends MusicBeatState
 					var lastAlpha:Float = dad.alpha;
 					dad.alpha = 0.00001;
 					dad = dadMap.get(name);
-
+					
 					dad.alpha = lastAlpha;
 					for (field in playFields.members)
 						if (field.owner == oldChar) field.owner = dad;

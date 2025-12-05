@@ -12,9 +12,9 @@ class Difficulty
 	public static final defaultDifficulties:Array<String> = ['Easy', 'Normal', 'Hard'];
 	
 	/**
-	 * Resets the currently loaded difficulties back to default
+	 * Resets the currently loaded difficulties to `defaultDifficulties`
 	 */
-	public static function reset() return (difficulties = defaultDifficulties.copy());
+	public static inline function reset() return (difficulties = defaultDifficulties.copy());
 	
 	/**
 	 * The considered default difficulty. Used to determine which difficulties chart shouldnt have a suffix
@@ -52,10 +52,12 @@ class Difficulty
 		return Paths.formatToSongPath(fileSuffix);
 	}
 	
-	public static function getCurDifficulty():String
+	/**
+	 * Gets the current difficulty by string.
+	 * @return String
+	 */
+	public static function getCurrentDifficultyString():String
 	{
-		var diff = difficulties[PlayState.storyMeta.difficulty] ?? defaultDifficulty;
-		
-		return diff.toUpperCase();
+		return difficulties[PlayState.storyMeta.difficulty] ?? defaultDifficulty;
 	}
 }

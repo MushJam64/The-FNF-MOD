@@ -123,7 +123,8 @@ class DiscordClient
 	 * @param hasStartTimestamp 
 	 * @param endTimestamp 
 	 */
-	public static function changePresence(details:String = 'In the Menus', ?state:String, ?smallImageKey:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float, largeImageKey:String = 'icon'):Void
+	public static function changePresence(details:String = 'In the Menus', ?state:String, ?smallImageKey:String, hasStartTimestamp:Bool = false, ?endTimestamp:Float,
+			largeImageKey:String = 'icon'):Void
 	{
 		final startTimestamp:Float = hasStartTimestamp == true ? Date.now().getTime() : 0;
 		
@@ -175,8 +176,9 @@ class DiscordClient
 	
 	public static var rpcId(default, set):String = '';
 	
-	public static function changePresence(details:String = 'In the Menus', ?state:String, ?smallImageKey:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float):Void {}
-	
+	public static inline function changePresence(details:String = 'In the Menus', ?state:String, ?smallImageKey:String, hasStartTimestamp:Bool = false, ?endTimestamp:Float,
+		largeImageKey:String = 'icon'):Void {}
+		
 	public static function close():Void {}
 	
 	public static function init() {}

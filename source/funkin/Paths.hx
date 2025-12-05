@@ -35,7 +35,7 @@ class Paths
 	/**
 	 * Default font used by the game for most things.
 	 * 
-	 * can be changed
+	 * Can be changed
 	 */
 	public static var DEFAULT_FONT:String = 'vcr.ttf';
 	
@@ -71,21 +71,33 @@ class Paths
 		return getCorePath(file);
 	}
 	
+	/**
+	 * Inserts the primary asset path to the given file path
+	 */
 	public static inline function getCorePath(file:String = ''):String
 	{
 		return '$CORE_DIRECTORY/$file';
 	}
 	
+	/**
+	 * Searches for a .txt file within the `data` directory.
+	 */
 	public static inline function txt(key:String, ?parentFolder:String, checkMods:Bool = true):String
 	{
 		return getPath('data/$key.txt', TEXT, parentFolder, checkMods);
 	}
 	
+	/**
+	 * Searches for a .xml file within the `data` directory.
+	 */
 	public static inline function xml(key:String, ?parentFolder:String, checkMods:Bool = true):String
 	{
 		return getPath('data/$key.xml', TEXT, parentFolder, checkMods);
 	}
 	
+	/**
+	 * Searches for a .json file within the `songs` directory.
+	 */
 	public static inline function json(key:String, ?parentFolder:String, checkMods:Bool = true):String
 	{
 		return getPath('songs/$key.json', TEXT, parentFolder, checkMods);
@@ -99,16 +111,27 @@ class Paths
 		return path;
 	}
 	
+	/**
+	 * Searches for a .frag file within the `shaders` directory.
+	 */
 	public static inline function fragment(key:String, checkMods:Bool = true):String
 	{
 		return getPath('shaders/$key.frag', TEXT, null, checkMods);
 	}
 	
+	/**
+	 * Searches for a .vert file within the `shaders` directory.
+	 */
 	public static inline function vertex(key:String, checkMods:Bool = true):String
 	{
 		return getPath('shaders/$key.vert', TEXT, null, checkMods);
 	}
 	
+	/**
+	 * Searches for a video file wihin the `videos` directory.
+	 * 
+	 * Automatically will attempt to append .mp4 and .mov extensions.
+	 */
 	public static function video(key:String, checkMods:Bool = true):String
 	{
 		return findFileWithExts('videos/$key', ['mp4', 'mov'], null, checkMods);
@@ -119,6 +142,11 @@ class Paths
 		return getPath('images/$key', BINARY, parentFolder, checkMods);
 	}
 	
+	/**
+	 * Searches for a file within the `sounds` directory and caches a `Sound` instance.
+	 * 
+	 * Automatically will attempt to append .ogg and .wav extensions.
+	 */
 	public static function sound(key:String, ?parentFolder:String, checkMods:Bool = true):Sound
 	{
 		final key = findFileWithExts('sounds/$key', ['ogg', 'wav'], parentFolder, checkMods);
@@ -126,11 +154,16 @@ class Paths
 		return FunkinAssets.getSound(key);
 	}
 	
-	public static inline function soundRandom(key:String, min:Int, max:Int, ?parentFolder:String, checkMods:Bool = true):Sound
+	public static inline function soundRandom(key:String, min:Int = 0, max:Int = 0, ?parentFolder:String, checkMods:Bool = true):Sound
 	{
 		return sound(key + FlxG.random.int(min, max), parentFolder, checkMods);
 	}
 	
+	/**
+	 * Searches for a file within the `music` directory and caches a `Sound` instance.
+	 * 
+	 * Automatically will attempt to append .ogg and .wav extensions.
+	 */
 	public static inline function music(key:String, ?parentFolder:String, checkMods:Bool = true):Sound
 	{
 		final key = findFileWithExts('music/$key', ['ogg', 'wav'], parentFolder, checkMods);
@@ -158,11 +191,19 @@ class Paths
 		return FunkinAssets.getSound(songKey);
 	}
 	
+	/**
+	 * Searches for a file within the `images` directory and caches a `FlxGraphic` instance.
+	 */
 	public static inline function image(key:String, ?parentFolder:String, allowGPU:Bool = true, checkMods:Bool = true):FlxGraphic
 	{
 		return FunkinAssets.getGraphic(getPath('images/$key.png', IMAGE, parentFolder, checkMods), true, allowGPU);
 	}
 	
+	/**
+	 * Searches for a font file wihin the `fonts` directory.
+	 * 
+	 * Automatically will attempt to append .ttf and .otf extensions.
+	 */
 	public static inline function font(key:String, checkMods:Bool = true):String
 	{
 		return findFileWithExts('fonts/$key', ['ttf', 'otf'], null, checkMods);
@@ -179,6 +220,11 @@ class Paths
 		return getPath(file, TEXT, parentFolder, checkMods); // assuming u mightve added a ext already
 	}
 	
+	/**
+	 * Attemps to get the text from a file. 
+	 * 
+	 * Will return a empty string if the file could not be found.
+	 */
 	public static function getTextFromFile(key:String, ?parentFolder:String, checkMods:Bool = true):String
 	{
 		key = getPath(key, TEXT, parentFolder, checkMods);
@@ -186,6 +232,9 @@ class Paths
 		return FunkinAssets.exists(key) ? FunkinAssets.getContent(key) : '';
 	}
 	
+	/**
+	 * Convenience function to check if a file exists. handles getPath for you
+	 */
 	public static inline function fileExists(key:String, type:AssetType = TEXT, ?parentFolder:String, checkMods:Bool = true):Bool
 	{
 		return FunkinAssets.exists(getPath(key, type, parentFolder, checkMods), type);
@@ -345,11 +394,17 @@ class Paths
 	}
 	
 	#if MODS_ALLOWED
+	/**
+	 * Inserts the mod asset path to the given file path
+	 */
 	public static inline function mods(key:String = ''):String
 	{
 		return '$MODS_DIRECTORY/' + key;
 	}
 	
+	/**
+	 * Searches the primary loaded mod path and general mod path for a given file
+	 */
 	public static function modFolders(key:String):String
 	{
 		if (Mods.currentModDirectory != null && Mods.currentModDirectory.length > 0)

@@ -342,16 +342,11 @@ class FreeplayState extends MusicBeatState
 			{
 				persistentUpdate = false;
 				
-				try
+				final songRet = PlayState.prepareForSong(songs[curSelected].songName, curDifficulty, false);
+				
+				if (songRet != null)
 				{
-					// todo write a func to ahndel this
-					PlayState.SONG = Chart.fromSong(songs[curSelected].songName, curDifficulty);
-					PlayState.isStoryMode = false;
-					PlayState.storyMeta.difficulty = curDifficulty;
-				}
-				catch (e)
-				{
-					var error = e.toString();
+					var error = songRet.toString();
 					
 					if (error.contains('incompatible format') && !error.contains(ChartFormat.UNKNOWN)) // scuffed method...
 					{
@@ -423,7 +418,7 @@ class FreeplayState extends MusicBeatState
 		#end
 		
 		PlayState.storyMeta.difficulty = curDifficulty;
-		diffText.text = '< ' + Difficulty.getCurDifficulty() + ' >';
+		diffText.text = '< ' + Difficulty.getCurrentDifficultyString().toUpperCase() + ' >';
 		positionHighscore();
 	}
 	

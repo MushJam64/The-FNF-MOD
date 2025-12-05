@@ -121,7 +121,7 @@ class PauseSubState extends MusicBeatSubstate
 			var levelInfo = createCornerText(PlayState.SONG.song);
 			add(levelInfo);
 			
-			var levelDifficulty = createCornerText(Difficulty.getCurDifficulty());
+			var levelDifficulty = createCornerText(Difficulty.getCurrentDifficultyString());
 			add(levelDifficulty);
 			
 			// temp just wanted to see this
