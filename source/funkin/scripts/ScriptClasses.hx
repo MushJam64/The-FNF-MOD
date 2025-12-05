@@ -37,6 +37,14 @@ class ScriptedFlxColor
 	public static function interpolate(color1:FlxColor, color2:FlxColor, factor:Float = 0.5):Int return cast FlxColor.interpolate(color1, color2, factor);
 	
 	public static function fromString(string:String):Int return cast FlxColor.fromString(string);
+	
+	public static function getRed(color:FlxColor):Int return cast color.red;
+	
+	public static function getGreen(color:FlxColor):Int return cast color.green;
+	
+	public static function getBlue(color:FlxColor):Int return cast color.blue;
+	
+	public static function toRGBA(color:FlxColor):Array<Int> return [color.red, color.green, color.blue, color.alpha];
 }
 
 /**
