@@ -102,7 +102,7 @@ class Bopper extends FlxSprite
 	 */
 	public function loadAtlas(path:String):Bopper
 	{
-		final isAtlasSprite = FunkinAssets.exists(Paths.getPath('images/$path/Animation.json', TEXT, null, true));
+		final isAtlasSprite = FunkinAssets.exists(Paths.getPath('images/$path/Animation.json', null, true));
 		if (isAtlasSprite)
 		{
 			if (animateAtlas == null)
@@ -114,7 +114,7 @@ class Bopper extends FlxSprite
 				animateAtlas.animation.onLoop.add((anim) -> onAnimationLoop.dispatch(__prevPlayedAnimation));
 			}
 			
-			animateAtlas.frames = FlxAnimateFrames.fromAnimate((Paths.getPath('images/$path', TEXT, null, true)));
+			animateAtlas.frames = FlxAnimateFrames.fromAnimate((Paths.getPath('images/$path', null, true)));
 		}
 		else
 		{

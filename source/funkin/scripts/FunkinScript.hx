@@ -31,7 +31,7 @@ class FunkinScript extends IrisEx implements IFlxDestroyable
 		{
 			final file = '$path.$extension';
 			
-			final targetPath = Paths.getPath(file, TEXT, null, true);
+			final targetPath = Paths.getPath(file, null, true);
 			if (FunkinAssets.exists(targetPath)) return targetPath;
 		}
 		return path;

@@ -63,7 +63,7 @@ class NoteSkinHelper implements IFlxDestroyable
 	
 	public static function init():Void
 	{
-		if (instance == null) instance = new NoteSkinHelper(Paths.getPath('data/noteskins/default.json', TEXT));
+		if (instance == null) instance = new NoteSkinHelper(Paths.getPath('data/noteskins/default.json'));
 	}
 	
 	public var data(default, null):NoteSkinData;

@@ -224,7 +224,7 @@ class CharacterOLD extends FlxSprite
 		flipX = (json.flip_x != isPlayer);
 		originalFlipX = (json.flip_x == true);
 		
-		final isAtlas = FunkinAssets.exists(Paths.getPath('images/${json.image}/Animation.json', TEXT, null, true));
+		final isAtlas = FunkinAssets.exists(Paths.getPath('images/${json.image}/Animation.json', null, true));
 		if (!isAtlas)
 		{
 			frames = Paths.getMultiAtlas(imageFile.split(','));

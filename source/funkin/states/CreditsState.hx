@@ -155,7 +155,7 @@ class CreditsState extends MusicBeatState
 				icon.xAdd = optionText.width + 10;
 				icon.sprTracker = optionText;
 				icon.copyVisible = false;
-				icon.visible = Paths.fileExists('images/credits/${credits[i].iconPath}.png', IMAGE);
+				icon.visible = Paths.fileExists('images/credits/${credits[i].iconPath}.png');
 				add(icon);
 				
 				Mods.currentModDirectory = '';
