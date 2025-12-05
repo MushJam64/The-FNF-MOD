@@ -345,8 +345,8 @@ class StoryMenuState extends MusicBeatState
 		WeekData.setDirectoryFromWeek(loadedWeeks[curWeek]);
 		
 		var diff:String = Difficulty.difficulties[curDifficulty];
-		var newImage:FlxGraphic = Paths.image('menudifficulties/' + Paths.formatToSongPath(diff));
-		// trace(Mods.currentModDirectory + ', menudifficulties/' + Paths.formatToSongPath(diff));
+		var newImage:FlxGraphic = Paths.image('menudifficulties/' + Paths.sanitize(diff));
+		// trace(Mods.currentModDirectory + ', menudifficulties/' + Paths.sanitize(diff));
 		
 		if (sprDifficulty.graphic != newImage)
 		{

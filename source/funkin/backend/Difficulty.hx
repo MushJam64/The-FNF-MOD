@@ -38,7 +38,7 @@ class Difficulty
 		if (fileSuffix == null)
 		{
 			Logger.log('difficulty in index $number does not exist');
-			return Paths.formatToSongPath(defaultDifficulty);
+			return Paths.sanitize(defaultDifficulty);
 		}
 		
 		if (fileSuffix != defaultDifficulty)
@@ -49,7 +49,7 @@ class Difficulty
 		{
 			fileSuffix = '';
 		}
-		return Paths.formatToSongPath(fileSuffix);
+		return Paths.sanitize(fileSuffix);
 	}
 	
 	/**

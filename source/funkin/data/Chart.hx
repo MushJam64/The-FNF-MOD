@@ -29,7 +29,7 @@ class Chart
 	 */
 	public static function fromPath(path:String):SwagSong
 	{
-		path = Paths.formatToSongPath(path);
+		path = Paths.sanitize(path);
 		if (!FunkinAssets.exists(path))
 		{
 			throw 'couldnt find chart at ($path)';
@@ -48,9 +48,9 @@ class Chart
 	{
 		var diff = Difficulty.getDifficultyFilePath(difficulty);
 		
-		songName = Paths.formatToSongPath(songName);
+		songName = Paths.sanitize(songName);
 		
-		var path = Paths.formatToSongPath(Paths.json('$songName/$songName$diff'));
+		var path = Paths.sanitize(Paths.json('$songName/$songName$diff'));
 		if (!FunkinAssets.exists(path))
 		{
 			throw 'couldnt find chart at ($path)';

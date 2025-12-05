@@ -112,7 +112,7 @@ class Logger
 			FileSystem.createDirectory(folder);
 		}
 		
-		final dumpPath = '$folder/$fileName' + '_' + Paths.formatToSongPath(Date.now().toString()).replace(':', '_') + '.txt';
+		final dumpPath = '$folder/$fileName' + '_' + Paths.sanitize(Date.now().toString()).replace(':', '_') + '.txt';
 		
 		try
 		{

@@ -440,7 +440,7 @@ class ChartEditorState extends MusicBeatState
 		
 		// sections = _song.notes;
 		
-		currentSongName = Paths.formatToSongPath(_song.song);
+		currentSongName = Paths.sanitize(_song.song);
 		loadSong();
 		reloadGridLayer();
 		Conductor.bpm = _song.bpm;
@@ -644,7 +644,7 @@ class ChartEditorState extends MusicBeatState
 		});
 		
 		var reloadSong:FlxButton = new FlxButton(saveButton.x + 90, saveButton.y, "Reload Audio", function() {
-			currentSongName = Paths.formatToSongPath(UI_songTitle.text);
+			currentSongName = Paths.sanitize(UI_songTitle.text);
 			loadSong();
 			updateWaveform();
 		});
@@ -672,7 +672,7 @@ class ChartEditorState extends MusicBeatState
 		});
 		
 		var loadEventJson:FlxButton = new FlxButton(loadAutosaveBtn.x, loadAutosaveBtn.y + 30, 'Load Events', function() {
-			var songName:String = Paths.formatToSongPath(_song.song);
+			var songName:String = Paths.sanitize(_song.song);
 			var file:String = Paths.json(songName + '/events');
 			
 			if (FunkinAssets.exists(file, TEXT))
@@ -3845,7 +3845,7 @@ class ChartEditorState extends MusicBeatState
 		
 		try
 		{
-			final songName = Paths.formatToSongPath(song);
+			final songName = Paths.sanitize(song);
 			PlayState.SONG = Chart.fromPath(Paths.json('$songName/$songName${Difficulty.getDifficultyFilePath()}'));
 		}
 		catch (e)
@@ -3890,7 +3890,7 @@ class ChartEditorState extends MusicBeatState
 			_file.addEventListener(Event.COMPLETE, onSaveComplete);
 			_file.addEventListener(Event.CANCEL, onSaveCancel);
 			_file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-			_file.save(data.trim(), Paths.formatToSongPath(_song.song) + ".json");
+			_file.save(data.trim(), Paths.sanitize(_song.song) + ".json");
 		}
 	}
 	

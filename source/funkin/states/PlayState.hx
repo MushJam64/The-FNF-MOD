@@ -840,7 +840,7 @@ class PlayState extends MusicBeatState
 		
 		startingSong = true;
 		
-		for (file in Paths.listAllFilesInDirectory('songs/${Paths.formatToSongPath(SONG.song)}/'))
+		for (file in Paths.listAllFilesInDirectory('songs/${Paths.sanitize(SONG.song)}/'))
 		{
 			final scriptPath = FunkinScript.getPath(file);
 			
@@ -866,7 +866,7 @@ class PlayState extends MusicBeatState
 		Paths.sound('missnote3');
 		
 		if (PauseSubState.songName != null) Paths.music(PauseSubState.songName);
-		else if (ClientPrefs.pauseMusic != 'None') Paths.music(Paths.formatToSongPath(ClientPrefs.pauseMusic));
+		else if (ClientPrefs.pauseMusic != 'None') Paths.music(Paths.sanitize(ClientPrefs.pauseMusic));
 		
 		// Updating Discord Rich Presence.
 		resetDiscordRPC();
@@ -1431,7 +1431,7 @@ class PlayState extends MusicBeatState
 		
 		final events:Array<EventNote> = [];
 		
-		final songName:String = Paths.formatToSongPath(SONG.song);
+		final songName:String = Paths.sanitize(SONG.song);
 		final file:String = Paths.json(songName + '/events');
 		
 		inline function makeEv(time:Float, ev:String, v1:String, v2:String)
@@ -2923,9 +2923,9 @@ class PlayState extends MusicBeatState
 					prevCamFollow = camFollow;
 					
 					final difficulty:String = Difficulty.getDifficultyFilePath();
-					final songLowercase = Paths.formatToSongPath(storyMeta.playlist[0].toLowerCase());
+					final songLowercase = Paths.sanitize(storyMeta.playlist[0].toLowerCase());
 					
-					trace('LOADING: ' + Paths.formatToSongPath(storyMeta.playlist[0]) + difficulty);
+					trace('LOADING: ' + Paths.sanitize(storyMeta.playlist[0]) + difficulty);
 					
 					PlayState.SONG = Chart.fromSong(songLowercase, PlayState.storyMeta.difficulty);
 					

@@ -172,7 +172,7 @@ class Paths
 	
 	public static inline function voices(song:String, ?postFix:String, checkMods:Bool = true):Null<Sound>
 	{
-		var songKey:String = '${formatToSongPath(song)}/Voices';
+		var songKey:String = '${sanitize(song)}/Voices';
 		if (postFix != null) songKey += '-$postFix';
 		
 		songKey = findFileWithExts('songs/$songKey', ['ogg', 'wav'], null, checkMods);
@@ -182,7 +182,7 @@ class Paths
 	
 	public static inline function inst(song:String, ?postFix:String, checkMods:Bool = true):Null<openfl.media.Sound>
 	{
-		var songKey:String = '${formatToSongPath(song)}/Inst';
+		var songKey:String = '${sanitize(song)}/Inst';
 		if (postFix != null) songKey += '-$postFix';
 		
 		songKey = findFileWithExts('songs/$songKey', ['ogg', 'wav'], null, checkMods);
@@ -340,9 +340,14 @@ class Paths
 		}
 	}
 	
-	public static inline function formatToSongPath(path:String):String
+	/**
+	 * Removes all non alpha numeric chars and replaces spaces with `-` to lower in a given String.
+	 * 
+	 * Example: My Song Path! == my-song-path
+	 */
+	public static inline function sanitize(path:String):String
 	{
-		return path.toLowerCase().replace(' ', '-');
+		return ~/[^- a-zA-Z0-9]+\//g.replace(path, '').replace(' ', '-').trim().toLowerCase();
 	}
 	
 	/**

@@ -57,7 +57,7 @@ function onStartCountdown()
 	if (!a && PlayState.isStoryMode)
 	{
 		a = true;
-		if (Paths.formatToSongPath(PlayState.SONG.song) == 'roses') FlxG.sound.play(Paths.sound('ANGRY'));
+		if (Paths.sanitize(PlayState.SONG.song) == 'roses') FlxG.sound.play(Paths.sound('ANGRY'));
 		
 		var path = Paths.getPath('data/dialogue/' + songName + '/' + songName + 'Dialogue.txt', null, true);
 		dialogueBox = new DialogueBox(false, CoolUtil.coolTextFile(path));
@@ -95,7 +95,7 @@ function schoolIntro(dialogueBox)
 	senpaiEvil.antialiasing = false;
 	senpaiEvil.x += 300;
 	
-	var songName:String = Paths.formatToSongPath(PlayState.SONG.song);
+	var songName:String = Paths.sanitize(PlayState.SONG.song);
 	if (songName == 'roses' || songName == 'thorns')
 	{
 		remove(black);
@@ -118,7 +118,7 @@ function schoolIntro(dialogueBox)
 		{
 			if (dialogueBox != null)
 			{
-				if (Paths.formatToSongPath(PlayState.SONG.song) == 'thorns')
+				if (Paths.sanitize(PlayState.SONG.song) == 'thorns')
 				{
 					add(senpaiEvil);
 					senpaiEvil.alpha = 0;

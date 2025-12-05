@@ -66,7 +66,7 @@ class VisualsUISubState extends BaseOptionsMenu
 	function onChangePauseMusic()
 	{
 		if (ClientPrefs.pauseMusic == 'None') FlxG.sound.music.volume = 0;
-		else FunkinSound.playMusic(Paths.music(Paths.formatToSongPath(ClientPrefs.pauseMusic)));
+		else FunkinSound.playMusic(Paths.music(Paths.sanitize(ClientPrefs.pauseMusic)));
 		
 		changedMusic = true;
 	}

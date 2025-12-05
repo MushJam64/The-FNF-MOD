@@ -30,7 +30,7 @@ typedef MetaVariables =
 	public static function getSong():Null<Metadata>
 	{
 		var json:MetaVariables = null;
-		final formattedSong = Paths.formatToSongPath(PlayState.SONG.song);
+		final formattedSong = Paths.sanitize(PlayState.SONG.song);
 		
 		var path = Paths.json('$formattedSong/meta');
 		if (FunkinAssets.exists(path))
