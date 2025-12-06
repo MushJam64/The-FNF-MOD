@@ -45,6 +45,8 @@ class ChromaticAberrationShader extends FlxShader
 	public function new()
 	{
 		super();
+		u_red.value = [0, 0];
+		u_blue.value = [0, 0];
 	}
 	
 	public function setChrom(offset:Float = 0.0)

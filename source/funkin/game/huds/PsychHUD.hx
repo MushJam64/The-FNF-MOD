@@ -173,8 +173,8 @@ class PsychHUD extends BaseHUD
 	
 	public function updateIconsAnimation()
 	{
-		iconP1.updateIconAnim(healthBar.percent / 100);
-		iconP2.updateIconAnim((100 - healthBar.percent) / 100);
+		iconP1.updateIconAnim(healthBar.percent * 0.01);
+		iconP2.updateIconAnim((100 - healthBar.percent) * 0.01);
 	}
 	
 	public function reloadHealthBarColors()
