@@ -4162,7 +4162,7 @@ class ChartingOptionsSubmenu extends MusicBeatSubstate
 		'Play from here',
 		'Set start time',
 		'Play from start time' /*, 'Botplay'*/,
-		'Exit to main menu'
+		'Exit to Editor Menu'
 	]; // shamelessly stolen from andromeda im sorry
 	var curSelected:Int = 0;
 	var canexit:Bool = false;
@@ -4240,8 +4240,9 @@ class ChartingOptionsSubmenu extends MusicBeatSubstate
 				// 	else
 				// 		grpMenuShit.members[curSelected].color = FlxColor.RED;
 				// 	// close();
-				case 'Exit to main menu':
-					FlxG.switchState(() -> new MainMenuState());
+				case 'Exit to Editor Menu':
+					FlxG.switchState(() -> new MasterEditorMenu());
+					FunkinSound.playMusic(Paths.music('freakyMenu'));
 			}
 		}
 	}
