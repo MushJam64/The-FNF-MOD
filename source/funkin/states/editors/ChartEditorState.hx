@@ -3271,8 +3271,8 @@ class ChartEditorState extends MusicBeatState
 	
 	function updateHeads():Void
 	{
-		var healthIconP1:String = loadHealthIconFromCharacter(_song.player1);
-		var healthIconP2:String = loadHealthIconFromCharacter(_song.player2);
+		var healthIconP1:String = 'bf';
+		var healthIconP2:String = 'dad';
 		
 		if (_song.notes[curSec].mustHitSection)
 		{
@@ -3288,36 +3288,27 @@ class ChartEditorState extends MusicBeatState
 		}
 	}
 	
-	function loadHealthIconFromCharacter(char:String)
-	{
-		var characterPath:String = 'data/characters/' + char + '.json';
-		if (!FunkinAssets.exists(characterPath)) characterPath = 'characters/$char.json';
-		
-		#if MODS_ALLOWED
-		var path:String = Paths.modFolders(characterPath);
-		if (!FunkinAssets.exists(path))
-		{
-			path = Paths.getCorePath(characterPath);
-		}
-		
-		if (!FunkinAssets.exists(path))
-		#else
-		var path:String = Paths.getCorePath(characterPath);
-		if (!OpenFlAssets.exists(path))
-		#end
-		{
-			path = Paths.getCorePath('data/characters/' + Character.DEFAULT_CHARACTER + '.json'); // If a character couldn't be found, change him to BF just to prevent a crash
-		}
-		
-		#if MODS_ALLOWED
-		var rawJson = File.getContent(path);
-		#else
-		var rawJson = OpenFlAssets.getText(path);
-		#end
-		
-		var json:Null<funkin.data.CharacterData.CharacterInfo> = cast FunkinAssets.parseJson(rawJson);
-		return json.healthicon ?? 'face';
-	}
+	// function loadHealthIconFromCharacter(char:String)
+	// {
+	// 	var characterPath:String = 'data/characters/' + char;
+	// 	if (!FunkinAssets.exists(Paths.json(characterPath))) characterPath = 'characters/$char';
+	// 	var path:String = Paths.json(characterPath);
+	// 	if (!FunkinAssets.exists(path))
+	// 	{
+	// 		path = Paths.getCorePath(characterPath);
+	// 	}
+	// 	if (!FunkinAssets.exists(path))
+	// 	{
+	// 		path = Paths.getCorePath('data/characters/' + Character.DEFAULT_CHARACTER + '.json'); // If a character couldn't be found, change him to BF just to prevent a crash
+	// 	}
+	// 	#if MODS_ALLOWED
+	// 	var rawJson = File.getContent(path);
+	// 	#else
+	// 	var rawJson = OpenFlAssets.getText(path);
+	// 	#end
+	// 	var json:Null<funkin.data.CharacterData.CharacterInfo> = cast FunkinAssets.parseJson(rawJson);
+	// 	return json.healthicon ?? 'face';
+	// }
 	
 	function updateNoteUI():Void
 	{
