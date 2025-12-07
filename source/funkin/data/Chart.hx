@@ -46,11 +46,16 @@ class Chart
 	 */
 	public static function fromSong(songName:String, difficulty:Int = -1):SwagSong
 	{
-		var diff = Difficulty.getDifficultyFilePath(difficulty);
-		
 		songName = Paths.sanitize(songName);
 		
-		var path = Paths.sanitize(Paths.json('$songName/$songName$diff'));
+		// checking to see if songname/data/difficulty exists
+		var path = Paths.sanitize(Paths.json('$songName/data/${Difficulty.difficulties[difficulty]}'));
+		if (!FunkinAssets.exists(path))
+		{
+			var diff = Difficulty.getDifficultyFilePath(difficulty);
+			path = Paths.sanitize(Paths.json('$songName/$songName$diff'));
+		}
+		
 		if (!FunkinAssets.exists(path))
 		{
 			throw 'couldnt find chart at ($path)';

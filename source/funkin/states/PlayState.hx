@@ -717,12 +717,16 @@ class PlayState extends MusicBeatState
 			stage.add(boyfriendGroup);
 		}
 		
-		for (file in Paths.listAllFilesInDirectory('scripts/').filter(path -> FunkinScript.isHxFile(path)))
+		inline function addSongScripts(directory)
 		{
-			final scriptPath = FunkinScript.getPath(file);
-			
-			initFunkinScript(file);
+			for (file in Paths.listAllFilesInDirectory(directory).filter(path -> FunkinScript.isHxFile(path)))
+			{
+				final scriptPath = FunkinScript.getPath(file);
+				
+				initFunkinScript(file);
+			}
 		}
+		addSongScripts('scripts');
 		
 		var gfVersion:String = SONG.gfVersion;
 		if (gfVersion == null || gfVersion.length < 1) SONG.gfVersion = gfVersion = 'gf';
@@ -840,14 +844,8 @@ class PlayState extends MusicBeatState
 		
 		startingSong = true;
 		
-		for (file in Paths.listAllFilesInDirectory('songs/${Paths.sanitize(SONG.song)}/'))
-		{
-			final scriptPath = FunkinScript.getPath(file);
-			
-			if (!FunkinScript.isHxFile(scriptPath)) continue;
-			
-			initFunkinScript(file);
-		}
+		addSongScripts('songs/${Paths.sanitize(SONG.song)}/');
+		addSongScripts('songs/${Paths.sanitize(SONG.song)}/scripts/');
 		
 		if (songStartCallback == null)
 		{
@@ -1432,7 +1430,10 @@ class PlayState extends MusicBeatState
 		final events:Array<EventNote> = [];
 		
 		final songName:String = Paths.sanitize(SONG.song);
-		final file:String = Paths.json(songName + '/events');
+		
+		var file:String = Paths.json('$songName/data/events');
+		
+		if (!FunkinAssets.exists(file)) file = Paths.json('$songName/events');
 		
 		inline function makeEv(time:Float, ev:String, v1:String, v2:String)
 		{
@@ -1448,7 +1449,8 @@ class PlayState extends MusicBeatState
 		
 		if (FunkinAssets.exists(file))
 		{
-			final eventsData:Array<Dynamic> = Chart.fromPath(Paths.json('$songName/events')).events;
+			final eventsData:Array<Dynamic> = Chart.fromPath(file).events;
+			
 			for (event in eventsData) // Event Notes
 			{
 				for (i in 0...event[1].length)
