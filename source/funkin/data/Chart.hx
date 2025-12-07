@@ -52,6 +52,10 @@ class Chart
 		var path = Paths.sanitize(Paths.json('$songName/data/${Difficulty.difficulties[difficulty]}'));
 		if (!FunkinAssets.exists(path))
 		{
+			path = Paths.sanitize(Paths.json('$songName/${Difficulty.difficulties[difficulty]}'));
+		}
+		if (!FunkinAssets.exists(path))
+		{
 			var diff = Difficulty.getDifficultyFilePath(difficulty);
 			path = Paths.sanitize(Paths.json('$songName/$songName$diff'));
 		}
